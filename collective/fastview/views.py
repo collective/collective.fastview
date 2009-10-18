@@ -11,8 +11,10 @@ from plone.app.customerize import registration
 from Products.Five.browser import BrowserView
 
 from zope.traversing.interfaces import ITraverser, ITraversable
-from zope.publisher.interfaces import IPublishTraverse, NotFound
+from zope.publisher.interfaces import IPublishTraverse
 from zope.publisher.interfaces.browser import IBrowserRequest
+from zope.viewlet.interfaces import IViewlet
+from zExceptions import NotFound
 
 from collective.fastview.interfaces import IGlobalDefineFreeRender
 
@@ -24,7 +26,6 @@ class HasGlobalDefines(BrowserView):
     def __call__(self):
         """ @return: True of False """
         fast_mode = IGlobalDefineFreeRender.providedBy(self.request)
-        print "Got fast mode:" + str(fast_mode)
         return not fast_mode
 
     def render(self):
@@ -35,10 +36,9 @@ class HasGlobalDefines(BrowserView):
 
 
 class Viewlets(BrowserView):
-    """ Viewlet renderer helper.
+    """ Expose arbitary viewlets to traversing by name.
 
-    Expose viewlets to templates by names.
-    Grok maps this view to every context as "@@viewlets" traversing point.
+    Exposes viewlets to templates by names.
 
     Example how to render plone.logo viewlet in arbitary template code point::
 
@@ -48,16 +48,41 @@ class Viewlets(BrowserView):
     zope.interface.implements(ITraversable)
 
     def getViewletByName(self, name):
-        """
+        """ Viewlets allow through-the-web customizations.
+
+        Through-the-web customization magic is managed by five.customerize.
+        We need to think of this when looking up viewlets.
+
         @return: Viewlet registration object
         """
         views = registration.getViews(IBrowserRequest)
+
         for v in views:
-            if v.name == name: return v
+
+            if v.provided == IViewlet:
+                # Note that we might have conflicting BrowserView with the same name,
+                # thus we need to check for provided
+                if v.name == name:
+                    return v
+
         return None
 
+    def getActiveLayer(self):
+        """
+        Get active theme layer for getting viewlets for the active theme.
 
-    def renderViewletByName(self, name):
+        @return: Theme layer instance
+        """
+        portal_skins = getToolByName(self.context, "portal_skins")
+        active_skin_name = portal_skins.get
+
+    def setupViewletByName(self, name):
+        """ Constructs a viewlet instance by its name.
+
+        Viewlet update() and render() method are not called.
+
+        @return: Viewlet instance of None if viewlet with name does not exist
+        """
         context = aq_inner(self.context)
         request = self.request
 
@@ -72,36 +97,27 @@ class Viewlets(BrowserView):
 
         # Create viewlet and put it to the acquisition chain
         # Viewlet need initialization parameters: context, request, view
-        viewlet = factory(context, request, self, None).__of__(context)
+        try:
+            viewlet = factory(context, request, self, None).__of__(context)
+        except TypeError:
+            # Bad constructor call parameters
+            raise RuntimeError("Unable to initialize viewlet %s. Factory method %s call failed." % (name, str(factory)))
 
-        # Perform viewlet computations
+        return viewlet
+
+    def traverse(self, name, further_path):
+        """
+        Allow travering intoviewlets by viewlet name.
+
+        @return: Viewlet HTML output
+
+        @raise: RuntimeError if viewlet is not found
+        """
+
+        viewlet = self.setupViewletByName(name)
+        if viewlet is None:
+            raise NotFound("Viewlet does not exist by name %s for theme layer %s" % name)
+
         viewlet.update()
         return viewlet.render()
 
-    def traverse(self, name, furthet_path):
-        """
-        Allow travering intoviewlets by viewlet name.
-
-        @return: Viewlet HTML output
-
-        @raise: RuntimeError if viewlet is not found
-        """
-        html = self.renderViewletByName(name)
-        if html == None:
-            raise NotFound("No viewlet registration by name %s" % name)
-
-        return html
-
-    def publishTraverse(self, request, name):
-        """
-        Allow travering intoviewlets by viewlet name.
-
-        @return: Viewlet HTML output
-
-        @raise: RuntimeError if viewlet is not found
-        """
-        html = self.renderViewletByName(name)
-        if html == None:
-            raise NotFound("No viewlet registration by name %s" % name)
-
-        return html

@@ -11,8 +11,11 @@ from Products.PloneTestCase.layer import PloneSite
 ptc.setupPloneSite()
 
 import collective.fastview
+from zope.publisher.interfaces import IPublishTraverse
+from zExceptions import NotFound
 
 class TestCase(ptc.PloneTestCase):
+
     class layer(PloneSite):
         @classmethod
         def setUp(cls):
@@ -25,29 +28,27 @@ class TestCase(ptc.PloneTestCase):
             pass
 
 
-def test_suite():
-    return unittest.TestSuite([
+class ViewletsTestCase(TestCase):
 
-        # Unit tests
-        #doctestunit.DocFileSuite(
-        #    'README.txt', package='collective.fastview',
-        #    setUp=testing.setUp, tearDown=testing.tearDown),
-
-        #doctestunit.DocTestSuite(
-        #    module='collective.fastview.mymodule',
-        #    setUp=testing.setUp, tearDown=testing.tearDown),
+    def test_viewlet_lookup(self):
+        """
+        """
 
 
-        # Integration tests that use PloneTestCase
-        #ztc.ZopeDocFileSuite(
-        #    'README.txt', package='collective.fastview',
-        #    test_class=TestCase),
+        # get Viewlets view
+        viewlets= self.portal.unrestrictedTraverse("@@viewlets")
 
-        #ztc.FunctionalDocFileSuite(
-        #    'browser.txt', package='collective.fastview',
-        #    test_class=TestCase),
+        # Test looking up a known viewlet
+        html = viewlets.traverse("plone.logo", [])
 
-        ])
+        self.assertTrue("portal-logo" in html)
 
-if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+
+    def test_bad_viewlet_look_up(self):
+        """
+        """
+        try:
+            viewlet = self.portal.unrestrictedTraverse("@@viewlets/foo")
+            raise AssertionError("Should not be never reachec")
+        except NotFound:
+            pass
