@@ -47,6 +47,18 @@ class Viewlets(BrowserView):
     """
     zope.interface.implements(ITraversable)
 
+
+    def matchLayers(self, has_layers, wanted_layers):
+        """ Check that viewlet is registered for an layer which is active
+
+        (<InterfaceClass zope.interface.Interface>, <InterfaceClass gomobiletheme.basic.interfaces.IThemeLayer>, <InterfaceClass zope.publisher.interfaces.browser.IBrowserView>, <implementedBy gomobiletheme.basic.viewlets.MainViewletManager>)
+
+        (<InterfaceClass zope.interface.Interface>, <InterfaceClass gomobiletheme.twinapex.interfaces.IThemeLayer>, <InterfaceClass zope.publisher.interfaces.browser.IBrowserView>, <implementedBy gomobiletheme.basic.viewlets.MainViewletManager>)
+        """
+
+        # TODO: Hack - no clue how to do this properly
+
+
     def getViewletByName(self, name):
         """ Viewlets allow through-the-web customizations.
 
@@ -57,13 +69,40 @@ class Viewlets(BrowserView):
         """
         views = registration.getViews(IBrowserRequest)
 
+        found = None
+
+        from plone.browserlayer.utils import registered_layers
+        wanted_layers = registered_layers()
+
+        # List of all viewlet registration with the name
+        # Note: several registrations possible due to layers
+        possible = []
+
         for v in views:
 
             if v.provided == IViewlet:
                 # Note that we might have conflicting BrowserView with the same name,
                 # thus we need to check for provided
                 if v.name == name:
-                    return v
+                    possible.append(v)
+
+        # Try match viewlets against active layers
+        # Start from the browserlayer with highest priority
+
+
+        # <InterfaceClass webcouturier.dropdownmenu.browser.interfaces.IDropdownSpecific>, <InterfaceClass Products.LinguaPlone.interfaces.ILinguaPloneProductLayer>, <InterfaceClass plonetheme.twinapex.browser.interfaces.IThemeSpecific>, <InterfaceClass quintagroup.seoptimizer.browser.interfaces.IPloneSEOLayer>, <InterfaceClass gomobile.mobile.interfaces.IMobileLayer>, <InterfaceClass gomobiletheme.basic.interfaces.IThemeLayer>, <InterfaceClass gomobiletheme.twinapex.interfaces.IThemeLayer>]
+
+        wanted_layers = wanted_layers[:]
+        wanted_layers.reverse()
+
+        for layer in wanted_layers:
+
+            for viewlet_registration in possible:
+
+                # (<InterfaceClass zope.interface.Interface>, <InterfaceClass gomobiletheme.basic.interfaces.IThemeLayer>, <InterfaceClass zope.publisher.interfaces.browser.IBrowserView>, <implementedBy gomobiletheme.basic.viewlets.MainViewletManager>)
+                theme_layer = viewlet_registration.required[1]
+                if theme_layer == layer:
+                    return viewlet_registration
 
         return None
 
