@@ -155,7 +155,7 @@ class Viewlets(BrowserView):
 
         viewlet = self.setupViewletByName(name)
         if viewlet is None:
-            raise NotFound("Viewlet does not exist by name %s for theme layer %s" % name)
+            raise NotFound("Viewlet does not exist by name %s for the active theme layer set " % name)
 
         viewlet.update()
         return viewlet.render()
