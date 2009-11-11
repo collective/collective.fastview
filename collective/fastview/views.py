@@ -71,8 +71,8 @@ class Viewlets(BrowserView):
 
         found = None
 
-        from plone.browserlayer.utils import registered_layers
-        wanted_layers = registered_layers()
+        # Get active layers on the currest request object
+        wanted_layers = list(self.request.__provides__.__iro__)
 
         # List of all viewlet registration with the name
         # Note: several registrations possible due to layers
@@ -88,12 +88,10 @@ class Viewlets(BrowserView):
 
         # Try match viewlets against active layers
         # Start from the browserlayer with highest priority
-
-
         # <InterfaceClass webcouturier.dropdownmenu.browser.interfaces.IDropdownSpecific>, <InterfaceClass Products.LinguaPlone.interfaces.ILinguaPloneProductLayer>, <InterfaceClass plonetheme.twinapex.browser.interfaces.IThemeSpecific>, <InterfaceClass quintagroup.seoptimizer.browser.interfaces.IPloneSEOLayer>, <InterfaceClass gomobile.mobile.interfaces.IMobileLayer>, <InterfaceClass gomobiletheme.basic.interfaces.IThemeLayer>, <InterfaceClass gomobiletheme.twinapex.interfaces.IThemeLayer>]
 
         wanted_layers = wanted_layers[:]
-        wanted_layers.reverse()
+        #wanted_layers.reverse()
 
         for layer in wanted_layers:
 
@@ -112,8 +110,7 @@ class Viewlets(BrowserView):
 
         @return: Theme layer instance
         """
-        portal_skins = getToolByName(self.context, "portal_skins")
-        active_skin_name = portal_skins.get
+        raise NotImplementedError()
 
     def setupViewletByName(self, name):
         """ Constructs a viewlet instance by its name.
