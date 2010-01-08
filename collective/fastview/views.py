@@ -152,7 +152,9 @@ class Viewlets(BrowserView):
 
         viewlet = self.setupViewletByName(name)
         if viewlet is None:
-            raise NotFound("Viewlet does not exist by name %s for the active theme layer set " % name)
+            active_layers = [ str(x) for x in self.request.__provides__.__iro__ ]
+            active_layers = tuple(active_layers)
+            raise NotFound("Viewlet does not exist by name %s for the active theme layer set %s. Probably theme interface not registered in plone.browserlayers. Try reinstalling the theme."  % (name, str(active_layers)))
 
         viewlet.update()
         return viewlet.render()
