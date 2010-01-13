@@ -3,6 +3,8 @@
 
 """
 
+import logging
+
 from Acquisition import aq_inner
 import zope.interface
 
@@ -17,6 +19,8 @@ from zope.viewlet.interfaces import IViewlet
 from zExceptions import NotFound
 
 from collective.fastview.interfaces import IGlobalDefineFreeRender
+
+logger = logging.getLogger("Plone")
 
 class HasGlobalDefines(BrowserView):
     """ View that exposes whether global defines should be included in main template or not.
@@ -73,7 +77,7 @@ class Viewlets(BrowserView):
 
         # Get active layers on the currest request object
         wanted_layers = list(self.request.__provides__.__iro__)
-
+                
         # List of all viewlet registration with the name
         # Note: several registrations possible due to layers
         possible = []
@@ -90,8 +94,19 @@ class Viewlets(BrowserView):
         # Start from the browserlayer with highest priority
         # <InterfaceClass webcouturier.dropdownmenu.browser.interfaces.IDropdownSpecific>, <InterfaceClass Products.LinguaPlone.interfaces.ILinguaPloneProductLayer>, <InterfaceClass plonetheme.twinapex.browser.interfaces.IThemeSpecific>, <InterfaceClass quintagroup.seoptimizer.browser.interfaces.IPloneSEOLayer>, <InterfaceClass gomobile.mobile.interfaces.IMobileLayer>, <InterfaceClass gomobiletheme.basic.interfaces.IThemeLayer>, <InterfaceClass gomobiletheme.twinapex.interfaces.IThemeLayer>]
 
+        # Expand wanted layers so that their parent classes are also considered
+        #new_wanted_layers = []
+        #for i in wanted_layers:
+        #    print i
+        #    new_wanted_layers.append(i)
+        #wanted_layers = new_wanted_layers
+        
         wanted_layers = wanted_layers[:]
+        
         #wanted_layers.reverse()
+        
+        
+        
 
         for layer in wanted_layers:
 
@@ -133,10 +148,18 @@ class Viewlets(BrowserView):
 
         # Create viewlet and put it to the acquisition chain
         # Viewlet need initialization parameters: context, request, view
+        
+        from Shared.DC.Scripts.Bindings import UnauthorizedBinding
+
+        if isinstance(context, UnauthorizedBinding):
+            # Viewlets cannot be constructed on Unauthorized error pages, so we try to reconstruct them using the site root
+            context = context.portal_url.getPortalObject()
+            viewlet = factory(context, request, self, None).__of__(context)
+        
         try:
             viewlet = factory(context, request, self, None).__of__(context)
-        except TypeError:
-            # Bad constructor call parameters
+        except TypeError, e:
+            logger.exception(e)
             raise RuntimeError("Unable to initialize viewlet %s. Factory method %s call failed." % (name, str(factory)))
 
         return viewlet
