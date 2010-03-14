@@ -26,6 +26,22 @@ to render any viewlet code::
             <div tal:replace="structure context/@@viewlets/plone.logo" />
         </div>
 
+Note that you still need to register viewlets against some viewlet manager,
+but it can be a dummy one, which is never rendered directly::
+
+        class MainViewletManager(grok.ViewletManager):
+            """ This viewlet manager is responsible for all gomobiletheme.basic viewlet registrations.
+        
+            Viewlets are directly referred in main_template.pt by viewlet name,
+            thus overriding Plone behavior to go through ViewletManager render step.
+            """
+            grok.name('gomobiletheme.basic.viewletmanager')
+        
+        # Set viewlet manager default to all following viewlets
+        grok.viewletmanager(MainViewletManager)
+
+
+
 Fix Grok 1.0 template inheritance
 ---------------------------------
 
@@ -58,19 +74,13 @@ Example::
         
         class Head(base.Head):
             """
-            Override <head> generation so that we use CSS files 
-            and static resources specific to this skin.
+            My inherited viewlet.
             """
             
-            def resource_url(self):
-                """ Get static resource URL.
-                
-                See gomobiletheme.basic.viewlets.Head for more information.
-                """
-                return self.portal_url + "/" + "++resource++plonecommunity.app"
-            
+          
         # Fix for grok 1.0 template inheritance
         # https://bugs.launchpad.net/grok/+bug/255005
+        # This will force Head viewlet to use its parent class template
         fix_grok_template_inheritance(Head, base.Head)
 
 
