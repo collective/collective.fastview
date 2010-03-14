@@ -89,9 +89,9 @@ Author
 
 `mFabrik Research Oy <mailto:info@mfabrik.com>`_ - Python and Plone professionals for hire.
 
-* `mFabrik business group web site <http://mfabrik.com>`_ 
+* `mFabrik web site <http://mfabrik.com>`_ 
 
-* `mFabrik business group mobile site <http://mfabrik.mobi>`_ 
+* `mFabrik mobile site <http://mfabrik.mobi>`_ 
 
 * `Blog <http://blog.mfabrik.com>`_
 
