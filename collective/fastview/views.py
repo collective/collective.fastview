@@ -52,17 +52,6 @@ class Viewlets(BrowserView):
     zope.interface.implements(ITraversable)
 
 
-    def matchLayers(self, has_layers, wanted_layers):
-        """ Check that viewlet is registered for an layer which is active
-
-        (<InterfaceClass zope.interface.Interface>, <InterfaceClass gomobiletheme.basic.interfaces.IThemeLayer>, <InterfaceClass zope.publisher.interfaces.browser.IBrowserView>, <implementedBy gomobiletheme.basic.viewlets.MainViewletManager>)
-
-        (<InterfaceClass zope.interface.Interface>, <InterfaceClass gomobiletheme.twinapex.interfaces.IThemeLayer>, <InterfaceClass zope.publisher.interfaces.browser.IBrowserView>, <implementedBy gomobiletheme.basic.viewlets.MainViewletManager>)
-        """
-
-        # TODO: Hack - no clue how to do this properly
-
-
     def getViewletByName(self, name):
         """ Viewlets allow through-the-web customizations.
 
@@ -90,24 +79,8 @@ class Viewlets(BrowserView):
                 if v.name == name:
                     possible.append(v)
 
-        # Try match viewlets against active layers
-        # Start from the browserlayer with highest priority
-        # <InterfaceClass webcouturier.dropdownmenu.browser.interfaces.IDropdownSpecific>, <InterfaceClass Products.LinguaPlone.interfaces.ILinguaPloneProductLayer>, <InterfaceClass plonetheme.twinapex.browser.interfaces.IThemeSpecific>, <InterfaceClass quintagroup.seoptimizer.browser.interfaces.IPloneSEOLayer>, <InterfaceClass gomobile.mobile.interfaces.IMobileLayer>, <InterfaceClass gomobiletheme.basic.interfaces.IThemeLayer>, <InterfaceClass gomobiletheme.twinapex.interfaces.IThemeLayer>]
-
-        # Expand wanted layers so that their parent classes are also considered
-        #new_wanted_layers = []
-        #for i in wanted_layers:
-        #    print i
-        #    new_wanted_layers.append(i)
-        #wanted_layers = new_wanted_layers
-        
         wanted_layers = wanted_layers[:]
         
-        #wanted_layers.reverse()
-        
-        
-        
-
         for layer in wanted_layers:
 
             for viewlet_registration in possible:
@@ -118,14 +91,6 @@ class Viewlets(BrowserView):
                     return viewlet_registration
 
         return None
-
-    def getActiveLayer(self):
-        """
-        Get active theme layer for getting viewlets for the active theme.
-
-        @return: Theme layer instance
-        """
-        raise NotImplementedError()
 
     def setupViewletByName(self, name):
         """ Constructs a viewlet instance by its name.
