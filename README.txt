@@ -4,6 +4,8 @@ Introduction
 -------------
 
 collective.fastview provides framework level helper code for Plone view and template management.
+It is intended to be used with of Plone 3, Zope viewlets and five.grok, 
+to workaround some rough corners on these frameworks.
 
 Installation
 ------------
@@ -95,10 +97,18 @@ These Python packages use this code
 
 * http://code.google.com/p/plonegomobile/source/browse/#svn/trunk/gomobile/gomobiletheme.basic/gomobiletheme/basic
 
-Sources
--------
+Source code repository
+-----------------------
 
 * https://svn.plone.org/svn/collective/collective.fastview
+
+Roadmap
+-------
+
+* Work around viewlet rendering so that update() method gets called only once
+  (not sure if issue currently). Probably needs to create a dummy ViewletManager
+  class and instance.
+
 
 Author
 ------
