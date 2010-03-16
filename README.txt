@@ -17,6 +17,11 @@ Add collective.fastview to buildout eggs list::
 Render viewlets without viewlet manager
 ---------------------------------------
 
+*The method described here is not a correct
+approach as viewlet update() method 
+might be called several times. It is just a shortcut 
+when you need to toss around few vietlets here and there*.
+
 You can directly put in viewlet call to any page template code 
 using a viewlet traverser. collective.fastview registers
 a view with name @@viewlets which you can use to traverse 
@@ -83,6 +88,17 @@ Example::
         # This will force Head viewlet to use its parent class template
         fix_grok_template_inheritance(Head, base.Head)
 
+Examples
+--------
+
+These Python packages use this code
+
+* http://code.google.com/p/plonegomobile/source/browse/#svn/trunk/gomobile/gomobiletheme.basic/gomobiletheme/basic
+
+Sources
+-------
+
+* https://svn.plone.org/svn/collective/collective.fastview
 
 Author
 ------
