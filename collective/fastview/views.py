@@ -119,13 +119,17 @@ class Viewlets(BrowserView):
         if isinstance(context, UnauthorizedBinding):
             # Viewlets cannot be constructed on Unauthorized error pages, so we try to reconstruct them using the site root
             context = context.portal_url.getPortalObject()
-            viewlet = factory(context, request, self, None).__of__(context)
         
         try:
-            viewlet = factory(context, request, self, None).__of__(context)
+            viewlet = factory(context, request, self, None)
+            
         except TypeError, e:
             logger.exception(e)
             raise RuntimeError("Unable to initialize viewlet %s. Factory method %s call failed." % (name, str(factory)))
+
+        if hasattr(viewlet, "__of__"):
+            # Plone 3 viewlets with implicit acquisiton
+            viewlet = viewlet.__of__(context)
 
         return viewlet
 
