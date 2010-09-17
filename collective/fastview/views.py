@@ -1,7 +1,14 @@
 """
-
+    Expose viewlets to renderable in the templates by their name.
 
 """
+
+
+__author__  = 'Mikko Ohtamaa <mikko.ohtamaa@mfabrik.com>'
+__docformat__ = 'epytext'
+__copyright__ = "2009-2010 mFabrik Research Oy"
+__license__ = "GPL 2"
+
 
 import logging
 
@@ -19,7 +26,7 @@ from zope.viewlet.interfaces import IViewlet
 
 from collective.fastview.interfaces import ViewletNotFoundException
 
-logger = logging.getLogger("Plone")
+logger = logging.getLogger("collective.fastview")
 
 class Viewlets(BrowserView):
     """ Expose arbitary viewlets to traversing by name.
