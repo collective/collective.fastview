@@ -11,6 +11,9 @@ from Products.PloneTestCase.layer import PloneSite
 ptc.setupPloneSite()
 
 import collective.fastview
+
+from collective.fastview.interfaces import ViewletNotFoundException
+
 from zope.publisher.interfaces import IPublishTraverse
 from zExceptions import NotFound
 
@@ -38,8 +41,8 @@ class ViewletsTestCase(TestCase):
         # get Viewlets view
         viewlets= self.portal.unrestrictedTraverse("@@viewlets")
 
-        # Test looking up a known viewlet
-        html = viewlets.traverse("plone.logo", [])
+        # Test direct traverse
+        html = self.portal.unrestrictedTraverse("@@viewlets/plone.logo")
 
         self.assertTrue("portal-logo" in html)
 
@@ -50,5 +53,5 @@ class ViewletsTestCase(TestCase):
         try:
             viewlet = self.portal.unrestrictedTraverse("@@viewlets/foo")
             raise AssertionError("Should not be never reachec")
-        except NotFound:
+        except ViewletNotFoundException:
             pass

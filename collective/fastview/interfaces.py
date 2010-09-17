@@ -3,6 +3,6 @@ import zope.interface
 
 from zope.publisher.interfaces.browser import IBrowserRequest
 
-class IGlobalDefineFreeRender(IBrowserRequest):
-    """ Marker interface applied for HTTP request object to notify that global defines should not be resolved.
-    """
+class ViewletNotFoundException(RuntimeError):
+    """ Special exception for the cases we didn't found a viewlet the user asked through traversing """
+    

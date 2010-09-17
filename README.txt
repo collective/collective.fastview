@@ -4,8 +4,8 @@ Introduction
 -------------
 
 collective.fastview provides framework level helper code for Plone view and template management.
-It is intended to be used with of Plone 3, Zope viewlets and five.grok, 
-to workaround some rough corners on these frameworks.
+It is intended to be used to give some workarounds some rough corners on these Zope 3
+and `five.grok <http://pypi.python.org/pypi/five.grok>`_ viewlewt frameworks.
 
 Installation
 ------------
@@ -16,25 +16,24 @@ Add collective.fastview to buildout eggs list::
                 ...
                 collective.fastview
 
-Render viewlets without viewlet manager
----------------------------------------
-
-*The method described here is not a correct
-approach as viewlet update() method 
-might be called several times. It is just a shortcut 
-when you need to toss around few vietlets here and there*.
+Render viewlets directly anywhere in the template
+---------------------------------------------------
 
 You can directly put in viewlet call to any page template code 
-using a viewlet traverser. collective.fastview registers
-a view with name @@viewlets which you can use to traverse 
+using a viewlet traverser. ``collective.fastview`` registers
+a view with name ``@@viewlets`` which you can use to traverse 
 to render any viewlet code::
 
         <div id="header">
             <div tal:replace="structure context/@@viewlets/plone.logo" />
         </div>
 
-Note that you still need to register viewlets against some viewlet manager,
-but it can be a dummy one, which is never rendered directly::
+Note that you still need to register viewlets against some (any) viewlet manager,
+but it can be a dummy one, which is never rendered using syntax::
+
+        <div tal:replace="structure provider:myarghyetanotherviewletmanagername" />
+
+Example of dummy viewlet manager::
 
         class MainViewletManager(grok.ViewletManager):
             """ This viewlet manager is responsible for all gomobiletheme.basic viewlet registrations.
@@ -47,15 +46,13 @@ but it can be a dummy one, which is never rendered directly::
         # Set viewlet manager default to all following viewlets
         grok.viewletmanager(MainViewletManager)
 
-
-
 Fix Grok 1.0 template inheritance
 ---------------------------------
 
 This fixes grok 1.0 problem that view and viewlets template are not inheritable between packages.
 E.g. if you subclass a view you need to manually copy over the view template also.
     
-We hope to get rid of this with Plone 4 / fixed grok.
+We hope to get rid of this in the future.
     
 See:
     
@@ -93,6 +90,12 @@ Example::
 Examples
 --------
 
+This code is mainly used with ``gomobiletheme.basic`` package
+to provide simple mobile themes without need to construct viewlet manager
+around every viewlet.
+
+* http://webandmobile.mfabrik.com
+
 These Python packages use this code
 
 * http://code.google.com/p/plonegomobile/source/browse/#svn/trunk/gomobile/gomobiletheme.basic/gomobiletheme/basic
@@ -102,18 +105,12 @@ Source code repository
 
 * https://svn.plone.org/svn/collective/collective.fastview
 
-Roadmap
--------
-
-* Work around viewlet rendering so that update() method gets called only once
-  (not sure if issue currently). Probably needs to create a dummy ViewletManager
-  class and instance.
-
-
 Author
 ------
 
 `mFabrik Research Oy <mailto:info@mfabrik.com>`_ - Python and Plone professionals for hire.
+
+* `Web and mobile project - mobilize your Plone site in an instant <http://webandmobile.mfabrik.com>` 
 
 * `mFabrik web site <http://mfabrik.com>`_ 
 

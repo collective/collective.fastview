@@ -16,28 +16,10 @@ from zope.traversing.interfaces import ITraverser, ITraversable
 from zope.publisher.interfaces import IPublishTraverse
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.viewlet.interfaces import IViewlet
-from zExceptions import NotFound
 
-from collective.fastview.interfaces import IGlobalDefineFreeRender
+from collective.fastview.interfaces import ViewletNotFoundException
 
 logger = logging.getLogger("Plone")
-
-class HasGlobalDefines(BrowserView):
-    """ View that exposes whether global defines should be included in main template or not.
-
-    """
-
-    def __call__(self):
-        """ @return: True of False """
-        fast_mode = IGlobalDefineFreeRender.providedBy(self.request)
-        return not fast_mode
-
-    def render(self):
-        """
-        """
-        raise RuntimeError("This view is supposed to be called as utility")
-
-
 
 class Viewlets(BrowserView):
     """ Expose arbitary viewlets to traversing by name.
@@ -49,8 +31,6 @@ class Viewlets(BrowserView):
         <div tal:content="context/@@viewlets/plone.logo" />
 
     """
-    zope.interface.implements(ITraversable)
-
 
     def getViewletByName(self, name):
         """ Viewlets allow through-the-web customizations.
@@ -133,20 +113,19 @@ class Viewlets(BrowserView):
 
         return viewlet
 
-    def traverse(self, name, further_path):
+    def __getitem__(self, name):
         """
         Allow travering intoviewlets by viewlet name.
 
         @return: Viewlet HTML output
 
-        @raise: RuntimeError if viewlet is not found
+        @raise: ViewletNotFoundException if viewlet is not found
         """
-
         viewlet = self.setupViewletByName(name)
         if viewlet is None:
             active_layers = [ str(x) for x in self.request.__provides__.__iro__ ]
             active_layers = tuple(active_layers)
-            raise NotFound("Viewlet does not exist by name %s for the active theme layer set %s. Probably theme interface not registered in plone.browserlayers. Try reinstalling the theme."  % (name, str(active_layers)))
+            raise ViewletNotFoundException("Viewlet does not exist by name %s for the active theme layer set %s. Probably theme interface not registered in plone.browserlayers. Try reinstalling the theme."  % (name, str(active_layers)))
 
         viewlet.update()
         return viewlet.render()
