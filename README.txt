@@ -108,9 +108,9 @@ Source code repository
 Author
 ------
 
-`mFabrik Research Oy <mailto:info@mfabrik.com>`_ - Python and Plone professionals for hire.
+`mFabrik Research Oy <mailto:research@mfabrik.com>`_ - Python and Plone professionals for hire.
 
-* `Web and mobile project - mobilize your Plone site in an instant <http://webandmobile.mfabrik.com>` 
+* `Web and mobile project - mobilize your Plone site in an instant <http://webandmobile.mfabrik.com>`_
 
 * `mFabrik web site <http://mfabrik.com>`_ 
 
