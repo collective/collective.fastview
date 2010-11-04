@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.2 - 0.2.1
+-----------
+
+* Try to be smarter handling the cases where viewlet raises an exception on update() or render() [miohtama]
+
+* Cleaned up some docs [miohtama]
+
 0.1 - 0.2
 ----------
  

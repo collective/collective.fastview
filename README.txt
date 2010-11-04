@@ -10,7 +10,7 @@ and `five.grok <http://pypi.python.org/pypi/five.grok>`_ viewlewt frameworks.
 Installation
 ------------
 
-Add collective.fastview to buildout eggs list::
+Add collective.fastview to ``buildout.cfg`` eggs list::
 
         eggs = 
                 ...
@@ -108,9 +108,9 @@ Source code repository
 Author
 ------
 
-`mFabrik Research Oy <mailto:research@mfabrik.com>`_ - Python and Plone professionals for hire.
+`mFabrik Research Oy <mailto:info@mfabrik.com>`_ - Python and Plone professionals for hire.
 
-* `Web and mobile project - mobilize your Plone site in an instant <http://webandmobile.mfabrik.com>`_
+* `mFabrik Web and Mobile - multichannel CMS made easy <http://webandmobile.mfabrik.com>`_ 
 
 * `mFabrik web site <http://mfabrik.com>`_ 
 
@@ -118,7 +118,4 @@ Author
 
 * `Blog <http://blog.mfabrik.com>`_
 
-* `More about Plone <http://mfabrik.com/technology/technologies/content-management-cms/plone>`_ 
-
-       
       

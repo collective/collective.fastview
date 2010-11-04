@@ -24,7 +24,7 @@ from zope.publisher.interfaces import IPublishTraverse
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.viewlet.interfaces import IViewlet
 
-from collective.fastview.interfaces import ViewletNotFoundException
+from collective.fastview.interfaces import ViewletNotFoundException, ViewletProcessingFailsException
 
 logger = logging.getLogger("collective.fastview")
 
@@ -107,6 +107,8 @@ class Viewlets(BrowserView):
             # Viewlets cannot be constructed on Unauthorized error pages, so we try to reconstruct them using the site root
             context = context.portal_url.getPortalObject()
         
+        print "Loading viewlet: " + name
+        
         try:
             viewlet = factory(context, request, self, None)
             
@@ -134,6 +136,10 @@ class Viewlets(BrowserView):
             active_layers = tuple(active_layers)
             raise ViewletNotFoundException("Viewlet does not exist by name %s for the active theme layer set %s. Probably theme interface not registered in plone.browserlayers. Try reinstalling the theme."  % (name, str(active_layers)))
 
-        viewlet.update()
-        return viewlet.render()
-
+        try:
+            viewlet.update()
+            result = viewlet.render()
+            return result
+        except Exception, e:
+            logger.exception(e)
+            raise ViewletProcessingFailsException("Viewlet does not render - check logging output for details:" + name)

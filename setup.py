@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.2'
+version = '0.2.1'
 
 setup(name='collective.fastview',
       version=version,
@@ -15,8 +15,8 @@ setup(name='collective.fastview',
         ],
       keywords='five.grok viewlet view helper grok',
       author='mFabrik Research Oy',
-      author_email='info@mfabrik.com',
-      url='http://svn.plone.org/svn/collective/',
+      author_email='research@mfabrik.com',
+      url='http://webandmobile.mfabik.com',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['collective'],
