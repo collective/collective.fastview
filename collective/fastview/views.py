@@ -107,8 +107,6 @@ class Viewlets(BrowserView):
             # Viewlets cannot be constructed on Unauthorized error pages, so we try to reconstruct them using the site root
             context = context.portal_url.getPortalObject()
         
-        print "Loading viewlet: " + name
-        
         try:
             viewlet = factory(context, request, self, None)
             

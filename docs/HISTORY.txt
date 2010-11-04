@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.2.1 - 0.2.2
+-------------
+
+* Fixed debug statement left in the code [miohtama]
+
 0.2 - 0.2.1
 -----------
 
